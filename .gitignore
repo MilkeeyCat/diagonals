@@ -1,4 +1,4 @@
-dependencies
+dependencies/**/*
 !dependencies/.gitkeep
 
 build
