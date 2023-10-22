@@ -1,6 +1,6 @@
 [submodule "dependencies/glText"]
-    path = dependencies/glText
-    url = https://github.com/vallentin/glText
+	path = dependencies/glText
+	url = https://github.com/vallentin/glText
 [submodule "dependencies/glew"]
 	path = dependencies/glew
 	url = https://github.com/nigels-com/glew

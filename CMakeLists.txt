@@ -10,12 +10,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include_directories(dependencies)
 
-add_subdirectory(dependencies/glfw-3.3.8)
-include_directories(dependencies/glfw-3.3.8/include)
+add_subdirectory(dependencies/glfw)
+include_directories(dependencies/glfw/include)
 
 add_compile_definitions(GLEW_STATIC)
-add_subdirectory(dependencies/glew-2.1.0)
-include_directories(dependencies/glew-2.1.0/include)
+add_subdirectory(dependencies/glew)
+include_directories(dependencies/glew/include)
 
 add_subdirectory(dependencies/glm)
 
