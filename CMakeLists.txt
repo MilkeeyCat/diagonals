@@ -17,8 +17,6 @@ add_compile_definitions(GLEW_STATIC)
 add_subdirectory(dependencies/glew)
 include_directories(dependencies/glew/include)
 
-add_subdirectory(dependencies/glm)
-
 include_directories(dependencies/imgui)
 
 include_directories(src)
