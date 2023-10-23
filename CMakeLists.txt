@@ -13,6 +13,8 @@ include_directories(dependencies)
 add_subdirectory(dependencies/glfw)
 include_directories(dependencies/glfw/include)
 
+include_directories(dependencies/glm)
+
 add_compile_definitions(GLEW_STATIC)
 add_subdirectory(dependencies/glew)
 include_directories(dependencies/glew/include)
