@@ -56,6 +56,8 @@ int main() {
     glfwSetKeyCallback(window, game.KeyCallback);
     glfwSetCursorPosCallback(window, game.CursorPositionCallback);
 
+    glClearColor(0.1f, 0.23f, 0.20f, 1.f);
+
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
