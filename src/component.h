@@ -6,6 +6,8 @@
 #include "graphics/vertex_array.h"
 #include "graphics/texture.h"
 #include "graphics/shader.h"
+#include "text_renderer.h"
+#include "utils.h"
 
 class Component {
 public:

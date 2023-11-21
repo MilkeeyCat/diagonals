@@ -2,17 +2,19 @@
 
 #include <unordered_map>
 #include <vector>
+#include <optional>
 #include "component.h"
 #include "GLFW/glfw3.h"
 #include "components/moves.h"
 #include "components/player.h"
+#include "text_renderer.h"
 
-#define GLT_IMPLEMENTATION
-#include "glText/gltext.h"
+//#define GLT_IMPLEMENTATION
+//#include "glText/gltext.h"
 
 class Game {
 public:
-    Game(GLFWwindow *window, unsigned char size, const float thikness);
+    Game(GLFWwindow *window, unsigned char size, const int width, const int height, const float thikness);
     ~Game();
 
     void Render();
@@ -27,17 +29,24 @@ private:
     GLFWwindow *window;
     std::vector<Component *> components;
     bool mousePressed;
-    std::unordered_map<std::string, GLTtext*> texts;
+    std::unordered_map<std::string, Text> texts;
     Moves *moves;
     Player *player;
 
 public:
-    enum {
+    enum GameState {
         GAME_OVER,
         GAME_NOT_STARTED,
         PLAYER_MOVE,
         ENEMY_MOVE,
-    } state;
+        PAUSE
+    };
+    GameState state;
+    std::optional <GameState> prevState;
     const float THIKNESS;
     const unsigned char size;
+    TextRender textRender;
+
+    int width;
+    int height;
 };

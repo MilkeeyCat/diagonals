@@ -50,7 +50,7 @@ int main() {
         std::cout << "Error: Something went wrong D:";
     }
 
-    Game game(window, 6, THIKNESS);
+    Game game(window, 6, WINDOW_WIDTH, WINDOW_HEIGHT, THIKNESS);
 
     glfwSetWindowUserPointer(window, &game);
     glfwSetKeyCallback(window, game.KeyCallback);
@@ -62,19 +62,24 @@ int main() {
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        if(game.state == game.PAUSE) {
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+        }
 
         game.Update();
         game.Render();
 
-        ImGui::Begin("Debug");
-        ImGui::InputInt("Game state", (int*)&game.state);
-        ImGui::End();
+        if(game.state == game.PAUSE) {
+            ImGui::Begin("Debug");
+            ImGui::InputInt("Game state", (int*)&game.state);
+            ImGui::InputInt("Game state", (int*)&game.prevState);
+            ImGui::End();
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

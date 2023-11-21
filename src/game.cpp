@@ -4,13 +4,28 @@
 #include "components/grid.h"
 #include "components/moves.h"
 #include "components/player.h"
+#include "components/start_screen.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 
-Game::Game(GLFWwindow *window, unsigned char size, const float thikness) : size(size), window(window), mousePressed(false), state(GAME_NOT_STARTED), THIKNESS(thikness) {
-    texts["gameResult"] = gltCreateText();
-    texts["hint"] = gltCreateText();
+Game::Game(GLFWwindow *window, unsigned char size, const int width, const int height, const float thikness)
+    : size(size), window(window), mousePressed(false),
+      state(GAME_NOT_STARTED), THIKNESS(thikness),
+      width(width), height(height), prevState(std::nullopt) {
+    textRender = TextRender();
 
-    gltSetText(texts["hint"], "press Space to restart the game");
+    texts["gameResult"] = {
+        .pos = {300.f, 250.f},
+        .color = {RGB_TO_NORMALIZED(242, 181, 212), 1},
+        .text = textRender.Create(""),
+        .scale = 10.f,
+    };
+
+    texts["hint"] = {
+        .pos = {300.f, 575.f},
+        .color = {RGB_TO_NORMALIZED(247, 214, 224), 1},
+        .text = textRender.Create("press Space to restart the game"),
+        .scale = 2.f,
+    };
 
     int windowWidth, windowHeight;
 
@@ -19,15 +34,12 @@ Game::Game(GLFWwindow *window, unsigned char size, const float thikness) : size(
     moves = new Moves(windowWidth, windowHeight, THIKNESS, size);
     Grid *grid = new Grid(this, moves, size, THIKNESS, windowWidth, windowHeight);
     player = new Player(moves, THIKNESS, windowWidth, windowHeight, size);
+    auto start_screen = new StartScreen(this);
 
     components.push_back(grid);
     components.push_back(moves);
     components.push_back(player);
-
-    if (!gltInit())
-	{
-		fprintf(stderr, "Failed to initialize glText\n");
-	}
+    components.push_back(start_screen);
 }
 
 Game::~Game() {
@@ -52,12 +64,26 @@ void Game::KeyCallback(GLFWwindow *window, int key, int scancode, int action, in
     ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 
     if(action == GLFW_PRESS) {
+        if(game->state != game->PAUSE) {
+            game->prevState = game->state;
+        }
+
         if(key == GLFW_KEY_SPACE && game->state == GAME_NOT_STARTED) {
             game->state = PLAYER_MOVE;
         }
 
+        if(key == GLFW_KEY_ESCAPE && game->state != PAUSE) {
+            game->state = game->PAUSE;
+        } else if(key == GLFW_KEY_ESCAPE && game->state == PAUSE) {
+            game->state = game->prevState.value();
+        }
+
         if(key == GLFW_KEY_SPACE && game->state == GAME_OVER) {
             //restart the game
+            game->Reset();
+        }
+
+        if(key == GLFW_KEY_R) {
             game->Reset();
         }
 
@@ -79,24 +105,9 @@ void Game::Render() {
     }
 
     if(state == GAME_OVER) {
-        gltBeginDraw();
-
-        gltColor(0.5f, 1.f, 1.f, 1.f);
-
-        gltDrawText2DAligned(
-                texts["gameResult"],
-                300.f,
-                250.f,
-                10.f,
-                GLT_CENTER,
-                GLT_CENTER
-        );
-
-        gltColor(0.1f, .5f, 1.f, 1.f);
-
-        gltDrawText2DAligned(texts["hint"], 300.f, 575.f, 2.f, GLT_CENTER, GLT_BOTTOM);
-
-        gltEndDraw();
+        for(auto [_, el] : texts) {
+            textRender.Render(el, GLT_CENTER, GLT_CENTER);
+        }
     }
 }
 
@@ -133,11 +144,11 @@ void Game::Update() {
         GameResult gameResult = moves->GetGameResult();
 
         if(gameResult == WIN) {
-            gltSetText(texts["gameResult"], "You\nwon\n :D");
+            gltSetText(texts["gameResult"].text, "You\nwon\n :D");
         } else if(gameResult == LOSE) {
-            gltSetText(texts["gameResult"], "You\nlost\n:D");
+            gltSetText(texts["gameResult"].text, "You\nlost\n:D");
         } else {
-            gltSetText(texts["gameResult"], "Draw :')");
+            gltSetText(texts["gameResult"].text, "Draw :')");
         }
     }
 

@@ -5,7 +5,7 @@ set(CMAKE_PROJECT_VERSION_PATCH, 0)
 
 project(Diagonals)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include_directories(dependencies)
